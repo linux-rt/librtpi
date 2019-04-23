@@ -9,3 +9,4 @@ nobase_include_HEADERS = \
 	rtpi/condition_variable.hpp \
 	rtpi/mutex.hpp
 
+LDADD = -lpthread
