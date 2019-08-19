@@ -30,7 +30,6 @@ inline constexpr pi_mutex PI_MUTEX_INIT(__u32 f) {
  */
 union pi_cond {
 	struct {
-		union pi_mutex	priv_mut;
 		__u32		cond;
 		__u32		flags;
 		__u32		wake_id;
@@ -40,13 +39,12 @@ union pi_cond {
 
 #ifndef __cplusplus
 #define PI_COND_INIT(f) \
-	{ .priv_mut = PI_MUTEX_INIT(f) \
-	, .cond = 0 \
+	{ .cond = 0 \
 	, .flags = f \
 	, .wake_id = 0 }
 #else
 inline constexpr pi_cond PI_COND_INIT(__u32 f) {
-	return pi_cond{ PI_MUTEX_INIT(f), 0, f, 0 };
+	return pi_cond{ 0, f, 0 };
 }
 #endif
 
