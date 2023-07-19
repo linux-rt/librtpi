@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-only
 
-AC_INIT([librtpi], [0.0.1], [dvhart@infradead.org])
+AC_INIT([librtpi], [0.0.1], [https://github.com/linux-rt/librtpi/issues])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AM_PROG_AR
 LT_INIT
