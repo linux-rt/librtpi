@@ -23,4 +23,4 @@ unit-test-job:   # This job runs in the test stage.
     - whoami
     - id
     - cat /etc/os-release
-    - chrt -f --pid 50 $$
+    - make check
