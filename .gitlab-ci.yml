@@ -4,22 +4,17 @@ before_script:
   - apt update -qq
   - apt install -y -qq build-essential autoconf autoconf-archive automake libtool m4 pkg-config
 
-stages:          # List of stages for jobs, and their order of execution
-  - build
+stages:
   - test
 
-build-job:       # This job runs in the build stage, which runs first.
-  stage: build
+test-job:
+  stage: test
   script:
     - autoreconf --install
     - mkdir build
     - cd build
     - ../configure
     - make
-
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
-  script:
     - whoami
     - id
     - cat /etc/os-release
