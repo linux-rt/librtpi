@@ -29,7 +29,7 @@ bindings (using the "Has a" vs. "Is a" inheritance model).
 	$ autoreconf --install
 	$ ./configure
 	$ make
-	$ ./test
+	$ make check
 
 # License and Copyright
 The Real-Time Priority Inheritance Library is licensed under the Lesser GNU
