@@ -258,4 +258,5 @@ int do_test(int argc, char **argv)
 }
 
 #define TEST_FUNCTION_ARGV do_test
+#define TIMEOUT 40
 #include "test-driver.c"
