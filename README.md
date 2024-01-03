@@ -37,7 +37,7 @@ Public License. The LGPL was chosen to make it possible to link with libc
 libraries, reuse code from libc, and still be as broadly usable as possible in
 industry.
 
-Copyright © 2018 VMware, Inc. All Rights Reserved.
+Copyright © 2018 VMware, Inc. All Rights Reserved.  
 Copyright © 2019-2023 National Instruments Corp. All Rights Reserved.
 
 # C Specification
