@@ -157,6 +157,7 @@ Notable differences from `std::condition_variable`:
 * `notify_one` and `notify_all` require a `std::unique_lock<rtpi::mutex>` parameter
 
 # References
-1. POSIX pthread API?
+1. POSIX: [The Open Group Base Specifications Issue 7, 2018 edition](https://pubs.opengroup.org/onlinepubs/9699919799/functions/contents.html)
 2. [Requeue-PI: Making Glibc Condvars PI-Aware](https://static.lwn.net/images/conf/rtlws11/papers/proc/p10.pdf)
 3. [Bug 11588 - pthread condvars are not priority inheritance aware](https://sourceware.org/bugzilla/show_bug.cgi?id=11588)
+4. Embedded Linux Conference 2020 presentation "librtpi: Conditional Variables for Real-Time Applications": [slides](https://elinux.org/images/a/ae/Librtpi.pdf), [video](https://www.youtube.com/watch?v=lRUKrLZPgLM)
