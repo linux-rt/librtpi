@@ -15,7 +15,4 @@ test-job:
     - cd build
     - ../configure
     - make
-    - whoami
-    - id
-    - cat /etc/os-release
     - make check
