@@ -16,3 +16,8 @@ test-job:
     - ../configure
     - make
     - make check
+  artifacts:
+    paths:
+      - build/tests/*.log
+      - build/tests/*/*.log
+    expire_in: 1 week
