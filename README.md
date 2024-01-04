@@ -162,3 +162,7 @@ Notable differences from `std::condition_variable`:
 2. [Requeue-PI: Making Glibc Condvars PI-Aware](https://static.lwn.net/images/conf/rtlws11/papers/proc/p10.pdf)
 3. [Bug 11588 - pthread condvars are not priority inheritance aware](https://sourceware.org/bugzilla/show_bug.cgi?id=11588)
 4. Embedded Linux Conference 2020 presentation "librtpi: Conditional Variables for Real-Time Applications": [slides](https://elinux.org/images/a/ae/Librtpi.pdf), [video](https://www.youtube.com/watch?v=lRUKrLZPgLM)
+
+# CI
+
+## Testing
