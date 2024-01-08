@@ -33,18 +33,22 @@ union pi_cond {
 		__u32		cond;
 		__u32		flags;
 		__u32		wake_id;
+		__u32		state;
 	};
 	__u8 pad[128];
 } __attribute__ ((aligned(64)));
+
+#define RTPI_COND_STATE_READY 0x1
 
 #ifndef __cplusplus
 #define PI_COND_INIT(f) \
 	{ .cond = 0 \
 	, .flags = f \
-	, .wake_id = 0 }
+	, .wake_id = 0 \
+	, .state = RTPI_COND_STATE_READY }
 #else
 inline constexpr pi_cond PI_COND_INIT(__u32 f) {
-	return pi_cond{ 0, f, 0 };
+	return pi_cond{ 0, f, 0, RTPI_COND_STATE_READY };
 }
 #endif
 

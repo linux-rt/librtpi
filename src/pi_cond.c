@@ -27,6 +27,7 @@ int pi_cond_init(pi_cond_t *cond, uint32_t flags)
 
 	memset(cond, 0, sizeof(*cond));
 	cond->flags = flags;
+	cond->state = RTPI_COND_STATE_READY;
 
 	return 0;
 }
@@ -111,7 +112,7 @@ int pi_cond_timedwait(pi_cond_t *cond, pi_mutex_t *mutex,
 		goto out;
 
 	/* If futex VAL changed between unlock & wait. */
-	if (err == EAGAIN) {
+	if (err == EAGAIN && cond->state == RTPI_COND_STATE_READY) {
 		/* Check if we raced with a waker. If there's a new
 		 * wake_id it means we've raced with a waker that came
 		 * after us and we might have missed a wake up, stay awake. */
