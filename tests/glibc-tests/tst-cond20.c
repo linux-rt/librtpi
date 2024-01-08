@@ -109,14 +109,15 @@ static int do_test(void)
 				pi_cond_signal(&cond, &mut);
 			pi_cond_broadcast(&cond, &mut);
 		}
+		pi_mutex_unlock(&mut);
 
+		pi_mutex_lock(&mut);
 		err = pi_cond_destroy(&cond);
 		if (err) {
 			printf("pi_cond_destroy failed: %s\n",
 			       strerror(err));
 			return 1;
 		}
-
 		pi_mutex_unlock(&mut);
 
 		/* Now clobber the cond variable which has been successfully
@@ -157,5 +158,4 @@ static int do_test(void)
 	return 0;
 }
 
-#define TIMEOUT 40
 #include "test-driver.c"
