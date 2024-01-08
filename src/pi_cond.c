@@ -47,6 +47,16 @@ static void pi_cond_wait_cleanup(void *arg)
 {
 	struct cancel_data *cdata = (struct cancel_data*)arg;
 
+	/*
+	  Per POSIX:
+	  "A side-effect of acting on a cancellation request while a thread is blocked
+	  on a condition variable is to re-acquire the mutex before calling any of the
+	  cancellation cleanup handlers."
+
+	  (Re)Acquire the mutex before calling other cancellation handlers lower
+	  in the stack. The pi_mutex_lock() call may fail with EDEADLOCK if we
+	  already own the mutex, that is OK in this case.
+	*/
 	if ((cdata->state == PTHREAD_CANCEL_ENABLE) &&
 	    (cdata->type == PTHREAD_CANCEL_DEFERRED))
 		pi_mutex_lock(cdata->mutex);
@@ -72,50 +82,53 @@ int pi_cond_timedwait(pi_cond_t *cond, pi_mutex_t *mutex,
 	if (abstime && !ts_valid(abstime))
 		return EINVAL;
 
+	pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cdata.state);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &cdata.type);
+	pthread_cleanup_push(pi_cond_wait_cleanup, &cdata);
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+
 	cond->cond++;
 	wake_id = cond->wake_id;
   again:
 	futex_id = cond->cond;
 	ret = pi_mutex_unlock(mutex);
 	if (ret)
-		return ret;
-
-	pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cdata.state);
-	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &cdata.type);
-	pthread_cleanup_push(pi_cond_wait_cleanup, &cdata);
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+		goto out;
 
 	ret = futex_wait_requeue_pi(cond, futex_id, abstime, mutex);
 	err = errno;
 
-	pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
-	pthread_cleanup_pop(0);
-	pthread_setcanceltype(cdata.type, NULL);
-	pthread_setcancelstate(cdata.state, NULL);
-
 	/* All good. Proper wakeup + we own the lock */
 	if (!ret)
-		return 0;
+		goto out;
 
 	/* For error cases we need to re-acquire the mutex. */
 	ret = pi_mutex_lock(mutex);
 	if (ret)
-		return ret;
+		goto out;
 
 	/* If futex VAL changed between unlock & wait. */
 	if (err == EAGAIN) {
 		/* Check if we raced with a waker. If there's a new
 		 * wake_id it means we've raced with a waker that came
 		 * after us and we might have missed a wake up, stay awake. */
-		if (cond->wake_id != wake_id)
-			return 0;
+		if (cond->wake_id != wake_id) {
+			ret = 0;
+			goto out;
+		}
 
 		/* Reload VAL and try again */
 		cond->cond++;
 		goto again;
 	}
+	ret = err;
+  out:
+	pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
+	pthread_cleanup_pop(0);
+	pthread_setcanceltype(cdata.type, NULL);
+	pthread_setcancelstate(cdata.state, NULL);
 
-	return err;
+	return ret;
 }
 
 int pi_cond_wait(pi_cond_t *cond, pi_mutex_t *mutex)
