@@ -37,6 +37,7 @@ int pi_cond_destroy(pi_cond_t *cond)
 	return 0;
 }
 
+#ifdef ENABLE_CANCELLATION
 struct cancel_data {
 	int state;
 	int type;
@@ -61,6 +62,7 @@ static void pi_cond_wait_cleanup(void *arg)
 	    (cdata->type == PTHREAD_CANCEL_DEFERRED))
 		pi_mutex_lock(cdata->mutex);
 }
+#endif
 
 static inline bool ts_valid(const struct timespec *ts)
 {
@@ -77,16 +79,17 @@ int pi_cond_timedwait(pi_cond_t *cond, pi_mutex_t *mutex,
 	int err;
 	__u32 wake_id;
 	__u32 futex_id;
-	struct cancel_data cdata = { .mutex = mutex };
 
 	if (abstime && !ts_valid(abstime))
 		return EINVAL;
 
+#ifdef ENABLE_CANCELLATION
+	struct cancel_data cdata = { .mutex = mutex };
 	pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cdata.state);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &cdata.type);
 	pthread_cleanup_push(pi_cond_wait_cleanup, &cdata);
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-
+#endif
 	cond->cond++;
 	wake_id = cond->wake_id;
   again:
@@ -123,11 +126,12 @@ int pi_cond_timedwait(pi_cond_t *cond, pi_mutex_t *mutex,
 	}
 	ret = err;
   out:
+#ifdef ENABLE_CANCELLATION
 	pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
 	pthread_cleanup_pop(0);
 	pthread_setcanceltype(cdata.type, NULL);
 	pthread_setcancelstate(cdata.state, NULL);
-
+#endif
 	return ret;
 }
 

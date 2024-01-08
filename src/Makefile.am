@@ -10,3 +10,7 @@ nobase_include_HEADERS = \
 	rtpi/mutex.hpp
 
 LDADD = -lpthread
+
+if ENABLE_CANCELLATION
+AM_CFLAGS=-DENABLE_CANCELLATION
+endif

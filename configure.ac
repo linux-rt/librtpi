@@ -2,6 +2,12 @@
 
 AC_INIT([librtpi], [0.0.1], [https://gitlab.com/linux-rt/librtpi/-/issues])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+
+AC_ARG_ENABLE([cancellation],
+    AS_HELP_STRING([--disable-cancellation], [disable cancellation support]))
+
+AM_CONDITIONAL([ENABLE_CANCELLATION], [test "x$enable_cancellation" != "xno"])
+
 AM_PROG_AR
 LT_INIT
 AC_PROG_CC
