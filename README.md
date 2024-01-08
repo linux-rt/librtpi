@@ -25,6 +25,12 @@ To encourage programming to the API, internal types specific to the
 implementation are opaque types, or private class members in the case of the C++
 bindings (using the "Has a" vs. "Is a" inheritance model).
 
+# Source
+
+* main: https://gitlab.com/linux-rt/librtpi
+* backup: https://github.com/linux-rt/librtpi
+* report issues at: https://gitlab.com/linux-rt/librtpi/-/issues
+
 # Build
 	$ autoreconf --install
 	$ ./configure
