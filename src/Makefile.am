@@ -3,6 +3,7 @@
 
 lib_LTLIBRARIES = librtpi.la
 librtpi_la_SOURCES = pi_futex.h pi_mutex.c pi_cond.c
+librtpi_la_LDFLAGS  = -version-info @LIBRTPI_VERSION@
 nobase_include_HEADERS = \
 	rtpi.h \
 	rtpi_internal.h \

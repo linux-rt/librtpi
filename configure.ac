@@ -1,6 +1,12 @@
 # SPDX-License-Identifier: LGPL-2.1-only
 
-AC_INIT([librtpi], [0.0.1], [https://gitlab.com/linux-rt/librtpi/-/issues])
+AC_INIT([librtpi], [1.0.0], [https://gitlab.com/linux-rt/librtpi/-/issues])
+
+MAJOR=1
+MINOR=0
+REVISION=0
+AC_SUBST([LIBRTPI_VERSION], [$MAJOR:$MINOR:$REVISION], [library version])
+
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 AC_ARG_ENABLE([cancellation],
