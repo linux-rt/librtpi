@@ -6,7 +6,7 @@
 
 #include "rtpi.h"
 
-int main(int argc, char *argv)
+int main(int argc, char *argv[])
 {
 	pi_mutex_t *mutex;
 	pi_cond_t *cond;
