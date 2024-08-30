@@ -185,7 +185,7 @@ class condition_variable {
 		   const std::chrono::time_point<Clock, Duration> &timeout_time,
 		   Predicate stop_waiting)
 	{
-		while (!stop_waiting) {
+		while (!stop_waiting()) {
 			if (wait_until(lock, timeout_time) ==
 			    cv_status::timeout)
 				return stop_waiting();
