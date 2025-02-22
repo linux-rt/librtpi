@@ -21,7 +21,7 @@ union pi_mutex {
 #define PI_MUTEX_INIT(f) { .futex = 0, .flags = f }
 #else
 inline constexpr pi_mutex PI_MUTEX_INIT(__u32 f) {
-	return pi_mutex{ 0, f };
+	return pi_mutex{{ 0, f }};
 }
 #endif
 
@@ -48,7 +48,7 @@ union pi_cond {
 	, .state = RTPI_COND_STATE_READY }
 #else
 inline constexpr pi_cond PI_COND_INIT(__u32 f) {
-	return pi_cond{ 0, f, 0, RTPI_COND_STATE_READY };
+	return pi_cond{{ 0, f, 0, RTPI_COND_STATE_READY }};
 }
 #endif
 
