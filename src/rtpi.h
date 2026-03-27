@@ -10,6 +10,12 @@
 #include <stdlib.h>
 #include <time.h>
 
+#ifdef _TIME_BITS
+#    if _TIME_BITS != __TIMESIZE
+#        error "This code can only be compiled with -U_TIME_BITS or -D_TIME_BITS=__TIMESIZE for now."
+#    endif
+#endif
+
 #include "rtpi_internal.h"
 
 #ifdef __cplusplus
