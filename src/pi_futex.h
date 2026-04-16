@@ -6,6 +6,12 @@
 #include <sys/syscall.h>
 #include <linux/futex.h>
 
+#if PI_EXPLICIT_TIME64
+#    define PI_FUTEX_SYSCALL_NR SYS_futex_time64
+#else
+#    define PI_FUTEX_SYSCALL_NR SYS_futex
+#endif
+
 static inline __u32 get_op(__u32 op, __u32 mod)
 {
 	if (!(mod & RTPI_MUTEX_PSHARED))
@@ -26,7 +32,8 @@ static inline int sys_futex(__u32 *uaddr, int op, __u32 val,
 			    const struct timespec *utime,
 			    __u32 *uaddr2, __u32 val3)
 {
-	return syscall(SYS_futex, uaddr, op, val, utime, uaddr2, val3);
+	return syscall(PI_FUTEX_SYSCALL_NR,
+			 uaddr, op, val, utime, uaddr2, val3);
 }
 
 /**

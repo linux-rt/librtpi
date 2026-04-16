@@ -10,12 +10,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#ifdef _TIME_BITS
-#    if _TIME_BITS != __TIMESIZE
-#        error "This code can only be compiled with -U_TIME_BITS or -D_TIME_BITS=__TIMESIZE for now."
-#    endif
-#endif
-
 #include "rtpi_internal.h"
 
 #ifdef __cplusplus
@@ -69,8 +63,12 @@ int pi_cond_destroy(pi_cond_t *cond);
 
 int pi_cond_wait(pi_cond_t *cond, pi_mutex_t *mutex);
 
-int pi_cond_timedwait(pi_cond_t *cond, pi_mutex_t *mutex,
-		      const struct timespec *abstime);
+int pi_cond_timedwait
+	(pi_cond_t *cond, pi_mutex_t *mutex, const struct timespec *abstime)
+#if PI_EXPLICIT_TIME64
+	__asm__("pi_cond_timedwait_64")
+#endif
+;
 
 int pi_cond_signal(pi_cond_t *cond, pi_mutex_t *mutex);
 

@@ -7,6 +7,37 @@
 #include <linux/futex.h>
 
 /*
+ * The __TIMESIZE macro identifies the native size of timestamps and
+ * should always have the same value for any given target
+ * architecture.  The (user-provided) value of _TIME_BITS determines
+ * whether timestamps in the standard library are 32 or 64 bit.
+ *
+ * If undefined, then _TIME_BITS == __TIMESIZE is implied.
+ * Else if __TIMESIZE == 32 && _TIME_BITS == 64 a special set of
+ * syscalls has to be used to support 64 bit timestamps on a 32 bit
+ * system.  If the Linux kernel has been configured without
+ * CONFIG_COMPAT_32BIT_TIME then those platforms will only have the 64
+ * bit replacement syscalls available.
+ *
+ * Even glibc doesn't support __TIMESIZE == 64 && _TIME_BITS == 32 so
+ * don't worry about that combination.
+ *
+ */
+
+#ifdef PI_EXPLICIT_TIME64
+#    // take the user's word for it
+#elif !defined(__TIMESIZE) || (__TIMESIZE != 32 && __TIMESIZE != 64)
+#    error "Expected __TIMESIZE macro to be defined to either 32 or 64 bit"
+#elif !defined(_TIME_BITS) || _TIME_BITS == __TIMESIZE
+#    define PI_EXPLICIT_TIME64 0
+#elif __TIMESIZE == 32 && _TIME_BITS == 64
+#    define PI_EXPLICIT_TIME64 1
+#else
+#    error "Unexpected combination of __TIMESIZE and _TIME_BITS detected"
+#endif
+
+
+/*
  * PI Mutex
  */
 union pi_mutex {
