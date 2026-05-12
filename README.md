@@ -31,11 +31,38 @@ bindings (using the "Has a" vs. "Is a" inheritance model).
 * backup: https://github.com/linux-rt/librtpi
 * report issues at: https://gitlab.com/linux-rt/librtpi/-/issues
 
-# Build
+# Configuration & Building
+
 	$ autoreconf --install
 	$ ./configure
 	$ make
 	$ make check
+
+Run `./configure --help` for a list of options and influential variables
+(e.g. `CPPFLAGS` or `CFLAGS`) that may be passed to the script in order to
+configure how the library is built.
+
+## Support for 64 bit Time ABIs
+The library supports native timestamps as well as explicit 64 bit timestamps on
+32 bit architectures, using the same `_TIME_BITS` configuration macro as
+*glibc*.  However, unlike *glibc*, the *librtpi* currently doesn't support
+mixing 32 bit and 64 bit timestamps within the same binary, so the user has to
+decide when building the library which mode to use and must ensure that all
+translation units are compiled with consistent definitions of the `_TIME_BITS`
+macro.  Failing this, inconsistently mixed ABIs will be detected reliably and
+result in a linker error.
+
+Add `-U_TIME_BITS` to `CPPFLAGS` (or ensure the macro wasn't defined in the
+first place) to use the native timestamp size, which is the default.  This might
+result in 32 bit or 64 bit time ABIs being used, depending on the target
+architecture.  Add `-D_TIME_BITS=64` to `CPPFLAGS` to ensure that only 64 bit
+time ABIs are used.  On 32 bit targets, adding `-D_TIME_BITS=32` to `CPPFLAGS`
+has the same effect as undefining the macro; on a 64 bit target, this
+configuration is not valid.
+
+Because the same macro that also controls the standard library is used, the
+layout of the `struct timespec` passed to the `pi_cond_timedwait` function
+should automatically be consistent.
 
 # License and Copyright
 The Real-Time Priority Inheritance Library is licensed under the Lesser GNU
